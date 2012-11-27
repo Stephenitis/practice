@@ -13,6 +13,7 @@ class DestinationsController < ApplicationController
   # GET /destinations/1
   # GET /destinations/1.json
   def show
+    @trip = Trip.find(params[:trip_id])
     @destination = Destination.find(params[:id])
 
     respond_to do |format|
@@ -24,6 +25,7 @@ class DestinationsController < ApplicationController
   # GET /destinations/new
   # GET /destinations/new.json
   def new
+    @trip = Trip.find(params[:trip_id])
     @destination = Destination.new
 
     respond_to do |format|
@@ -34,17 +36,19 @@ class DestinationsController < ApplicationController
 
   # GET /destinations/1/edit
   def edit
+    @trip = Trip.find(params[:trip_id])
     @destination = Destination.find(params[:id])
   end
 
   # POST /destinations
   # POST /destinations.json
   def create
-    @destination = Destination.new(params[:destination])
+    @trip = Trip.find(params[:trip_id])
+    @destination = @trip.destinations.new(params[:destination])
 
     respond_to do |format|
       if @destination.save
-        format.html { redirect_to @destination, notice: 'Destination was successfully created.' }
+        format.html { redirect_to trip_destination_path(@trip, @destination), notice: 'Destination was successfully created.' }
         format.json { render json: @destination, status: :created, location: @destination }
       else
         format.html { render action: "new" }
@@ -60,7 +64,7 @@ class DestinationsController < ApplicationController
 
     respond_to do |format|
       if @destination.update_attributes(params[:destination])
-        format.html { redirect_to @destination, notice: 'Destination was successfully updated.' }
+        format.html { redirect_to trip_destination_path(@destination.trip, @destination), notice: 'Destination was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
